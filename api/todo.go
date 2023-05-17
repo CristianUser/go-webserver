@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetTodoRoutes(router *gin.Engine) {
+func SetTodoRoutes(router *gin.RouterGroup) {
 
 	router.GET("/todos", controller.GetTodos)
 	router.GET("/todo/:id", controller.GetTodo)
