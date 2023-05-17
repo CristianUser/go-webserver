@@ -26,9 +26,6 @@ func main() {
 	router := gin.Default()
 	v1 := router.Group("/api/v1")
 
-	// public.POST("/register", controllers.Register)
-	// public.POST("/login",controllers.Login)
-
 	protected := v1.Group("/")
 	protected.Use(middlewares.JwtAuthMiddleware())
 

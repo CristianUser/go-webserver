@@ -10,7 +10,7 @@ import (
 
 func Database() (*gorm.DB, error) {
 
-	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{PrepareStmt: true})
 
 	if err != nil {
 		log.Fatal(err.Error())

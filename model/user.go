@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -32,12 +33,13 @@ const (
 
 type Session struct {
 	gorm.Model
-	UserId         uint         `json:"userId"`
-	User           User         `json:"user"`
-	Token          string       `json:"token" gorm:"not null;unique"`
-	Provider       AuthProvider `json:"provider" gorm:"default:'LOCAL'"`
-	LastTimeActive time.Time    `json:"lastTimeActive" gorm:"default:CURRENT_TIMESTAMP"`
-	ExpiresAt      time.Time    `json:"expiresAt"`
+	UserId         uint           `json:"userId"`
+	User           User           `json:"user"`
+	Token          string         `json:"token" gorm:"not null;unique"`
+	Provider       AuthProvider   `json:"provider" gorm:"default:'LOCAL'"`
+	LastTimeActive time.Time      `json:"lastTimeActive" gorm:"default:CURRENT_TIMESTAMP"`
+	ExpiresAt      time.Time      `json:"expiresAt"`
+	DeviceInfo     datatypes.JSON `json:"deviceInfo" gorm:"type:jsonb; default:'{}'"`
 }
 
 func (s *Session) SaveSession(tx *gorm.DB) (*Session, error) {
