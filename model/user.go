@@ -7,6 +7,7 @@ import (
 	"html"
 	"log"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -22,12 +23,21 @@ type User struct {
 	IdCard   string `json:"idCard"`
 }
 
+type AuthProvider string
+
+const (
+	LOCAL  AuthProvider = "LOCAL"
+	GOOGLE AuthProvider = "GOOGLE"
+)
+
 type Session struct {
 	gorm.Model
-	UserId         uint   `json:"userId"`
-	User           User   `json:"user"`
-	Token          string `json:"token"`
-	LastTimeActive string `json:"lastTimeActive"`
+	UserId         uint         `json:"userId"`
+	User           User         `json:"user"`
+	Token          string       `json:"token" gorm:"not null;unique"`
+	Provider       AuthProvider `json:"provider" gorm:"default:'LOCAL'"`
+	LastTimeActive time.Time    `json:"lastTimeActive" gorm:"default:CURRENT_TIMESTAMP"`
+	ExpiresAt      time.Time    `json:"expiresAt"`
 }
 
 func (s *Session) SaveSession(tx *gorm.DB) (*Session, error) {

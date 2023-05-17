@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 	"pronesoft/server/model"
 	"pronesoft/server/utils/token"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -40,9 +40,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	jwtToken, err := token.GenerateToken(user.ID)
-
-	log.Println("Reached this point", jwtToken)
+	jwtToken, exp, err := token.GenerateToken(user.ID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
@@ -50,8 +48,9 @@ func Login(c *gin.Context) {
 	}
 
 	session := &model.Session{
-		UserId: user.ID,
-		Token:  jwtToken,
+		UserId:    user.ID,
+		Token:     jwtToken,
+		ExpiresAt: time.Unix(exp, 0),
 	}
 
 	_, err = session.SaveSession(db)

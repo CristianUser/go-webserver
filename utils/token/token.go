@@ -11,25 +11,28 @@ import (
 	jwt "github.com/golang-jwt/jwt/v4"
 )
 
-func GenerateToken(user_id uint) (string, error) {
+func GenerateToken(user_id uint) (string, int64, error) {
 
 	token_lifespan, err := strconv.Atoi(os.Getenv("TOKEN_HOUR_LIFESPAN"))
 
 	if err != nil {
-		return "", err
+		return "", 0, err
 	}
 
 	if token_lifespan == 0 {
 		token_lifespan = 24
 	}
 
+	exp := time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix()
+
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["user_id"] = user_id
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix()
+	claims["exp"] = exp
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(os.Getenv("API_SECRET")))
 
-	return token.SignedString([]byte(os.Getenv("API_SECRET")))
+	return tokenString, exp, err
 
 }
 

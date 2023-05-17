@@ -3,6 +3,7 @@ package middlewares
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"pronesoft/server/model"
 	"pronesoft/server/utils/token"
@@ -26,6 +27,17 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		session.LastTimeActive = time.Now()
+
+		db, err := model.Database()
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Internal Server Error")
+			c.Abort()
+			return
+		}
+
+		db.Save(&session)
 
 		b, _ := json.Marshal(&session)
 		var m map[string]interface{}
