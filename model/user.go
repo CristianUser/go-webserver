@@ -85,3 +85,19 @@ func GetUserByID(uid uint) (User, error) {
 	return u, nil
 
 }
+
+func GetSessionByToken(token string) (Session, error) {
+
+	var s Session
+	db, err := Database()
+	if err != nil {
+		log.Println(err)
+	}
+
+	if err := db.Where("token = ?", token).First(&s).Error; err != nil {
+		return s, errors.New("Session not found!")
+	}
+
+	return s, nil
+
+}

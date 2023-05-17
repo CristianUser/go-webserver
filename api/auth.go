@@ -9,6 +9,6 @@ import (
 func SetAuthRoutes(router, protected *gin.RouterGroup) {
 	router.POST("/login", controller.Login)
 	router.POST("/register", controller.PostUser)
-	// protected.POST("/logout", controller.Logout)
+	protected.POST("/logout", controller.Logout)
 	// protected.POST("/refresh", controller.Refresh)
 }

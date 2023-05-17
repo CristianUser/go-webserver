@@ -62,8 +62,30 @@ func Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"token":   jwtToken,
-		"session": session,
-		"user":    user,
+		"token": jwtToken,
+		"user":  user,
 	})
+}
+
+func Logout(c *gin.Context) {
+
+	var session model.Session
+	currentSessionMap := c.GetStringMap("session")
+
+	db, err := model.Database()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	if err := db.Where("token= ?", currentSessionMap["token"]).First(&session).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Session not found"})
+		return
+	}
+
+	if err := db.Delete(&session).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting session"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Session deleted"})
 }

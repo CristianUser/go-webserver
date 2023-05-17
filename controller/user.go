@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"pronesoft/server/model"
-	"pronesoft/server/utils/token"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -66,15 +65,9 @@ func GetUser(c *gin.Context) {
 }
 
 func CurrentUser(c *gin.Context) {
+	userId := c.GetUint("userId")
 
-	user_id, err := token.ExtractTokenID(c)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	u, err := model.GetUserByID(user_id)
+	u, err := model.GetUserByID(userId)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
