@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type NewUser struct {
@@ -86,20 +85,13 @@ func PostUser(c *gin.Context) {
 		return
 	}
 
-	// encrypt password
-	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 10)
-
-	if err != nil {
-		log.Println(err)
-	}
-
 	username := html.EscapeString(strings.TrimSpace(user.Username))
 
 	newUser := model.User{
 		Name:     user.Name,
 		LastName: user.LastName,
 		Email:    user.Email,
-		Password: string(hash),
+		Password: user.Password,
 		Username: username,
 		IdCard:   user.IdCard,
 	}
